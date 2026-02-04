@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue"
+import { reactive } from "vue"
 import { RouterLink } from "vue-router"
 import type { Body_login_login_access_token as AccessToken } from "@/client"
 import AuthLayout from "@/components/Common/AuthLayout.vue"
@@ -84,30 +84,36 @@ const errors = reactive({
 })
 
 const validateEmail = () => {
-  if (!formData.username) {
+  if (!formData.username || !formData.username.trim()) {
     errors.username = "Email is required"
+    return false
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.username)) {
     errors.username = "Invalid email format"
+    return false
   } else {
     errors.username = ""
+    return true
   }
 }
 
 const validatePassword = () => {
   if (!formData.password) {
     errors.password = "Password is required"
+    return false
   } else if (formData.password.length < 8) {
     errors.password = "Password must be at least 8 characters"
+    return false
   } else {
     errors.password = ""
+    return true
   }
 }
 
 const onSubmit = () => {
-  validateEmail()
-  validatePassword()
+  const isEmailValid = validateEmail()
+  const isPasswordValid = validatePassword()
 
-  if (!errors.username && !errors.password && !loginMutation.isPending.value) {
+  if (isEmailValid && isPasswordValid && !loginMutation.isPending.value) {
     loginMutation.mutate(formData)
   }
 }

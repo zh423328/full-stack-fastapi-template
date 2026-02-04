@@ -5,14 +5,14 @@
       variant === 'destructive' && 'text-destructive hover:bg-destructive/10 focus:bg-destructive/10',
       props.class
     )"
-    @click="handleClick"
+    @click="$emit('click', $event)"
   >
     <slot />
   </button>
 </template>
 
 <script setup lang="ts">
-import { inject, type HTMLAttributes } from "vue"
+import { type HTMLAttributes } from "vue"
 import { cn } from "@/lib/utils"
 
 interface DropdownMenuItemProps {
@@ -24,9 +24,7 @@ const props = withDefaults(defineProps<DropdownMenuItemProps>(), {
   variant: "default",
 })
 
-const dropdownMenu = inject<any>("dropdownMenu")
-
-const handleClick = () => {
-  dropdownMenu?.close()
-}
+defineEmits<{
+  click: [event: MouseEvent]
+}>()
 </script>

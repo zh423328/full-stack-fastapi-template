@@ -3,9 +3,11 @@
     <Transition name="dropdown">
       <div
         v-if="isOpen"
+        ref="contentRef"
         v-click-outside="close"
         class="absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
-        :style="{ top: `${position.top}px`, left: `${position.left}px` }"
+        :style="contentStyle"
+        @click.stop
       >
         <slot />
       </div>
@@ -14,20 +16,65 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref, watch } from "vue"
-import { onClickOutside } from "@vueuse/core"
+import { computed, inject, ref, watch, nextTick } from "vue"
+
+interface Props {
+  align?: "start" | "center" | "end"
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  align: "start",
+})
 
 const dropdownMenu = inject<any>("dropdownMenu")
 const isOpen = dropdownMenu?.isOpen
+const triggerRect = dropdownMenu?.triggerRect
 const close = () => dropdownMenu?.close()
 
-const position = ref({ top: 0, left: 0 })
+const contentRef = ref<HTMLElement | null>(null)
 
-// 简化版本，实际应该计算触发器位置
-watch(isOpen, (newValue) => {
+const contentStyle = computed(() => {
+  console.log('Computing content style', { triggerRect: triggerRect?.value, isOpen: isOpen?.value })
+  if (!triggerRect?.value) {
+    return { top: "0px", left: "0px" }
+  }
+
+  const rect = triggerRect.value
+  let left = rect.left + window.scrollX
+  const top = rect.bottom + window.scrollY + 4
+
+  if (props.align === "end") {
+    left = rect.right + window.scrollX - 128
+  } else if (props.align === "center") {
+    left = rect.left + window.scrollX + rect.width / 2 - 64
+  }
+
+  console.log('Computed position:', { top, left })
+  return {
+    top: `${top}px`,
+    left: `${left}px`,
+  }
+})
+
+watch(isOpen, async (newValue) => {
+  console.log('isOpen changed:', newValue)
   if (newValue) {
-    // TODO: 计算正确的位置
-    position.value = { top: 100, left: 100 }
+    await nextTick()
+    if (contentRef.value) {
+      const rect = contentRef.value.getBoundingClientRect()
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
+
+      if (rect.right > viewportWidth) {
+        const currentLeft = parseFloat(contentRef.value.style.left)
+        contentRef.value.style.left = `${currentLeft - (rect.right - viewportWidth) - 8}px`
+      }
+
+      if (rect.bottom > viewportHeight && triggerRect?.value) {
+        const triggerTop = triggerRect.value.top + window.scrollY
+        contentRef.value.style.top = `${triggerTop - rect.height - 4}px`
+      }
+    }
   }
 })
 </script>

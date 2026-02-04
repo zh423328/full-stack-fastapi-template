@@ -1,24 +1,22 @@
 <template>
-  <DropdownMenu>
-    <DropdownMenuTrigger>
-      <Button variant="ghost" size="icon">
+  <DropdownMenu align="end">
+    <template #trigger>
+      <button class="inline-flex items-center justify-center h-9 w-9 rounded-md hover:bg-accent transition-colors">
         <EllipsisVertical class="h-4 w-4" />
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end">
-      <EditItem :item="item" @success="handleSuccess" />
-      <DeleteItem :id="item.id" @success="handleSuccess" />
-    </DropdownMenuContent>
+      </button>
+    </template>
+    
+    <template #content="{ close }">
+      <EditItem :item="item" @success="() => { handleSuccess(); close(); }" />
+      <DeleteItem :id="item.id" @success="() => { handleSuccess(); close(); }" />
+    </template>
   </DropdownMenu>
 </template>
 
 <script setup lang="ts">
 import { EllipsisVertical } from "lucide-vue-next"
 import type { ItemPublic } from "@/client"
-import Button from "@/components/ui/button.vue"
 import DropdownMenu from "@/components/ui/dropdown-menu.vue"
-import DropdownMenuTrigger from "@/components/ui/dropdown-menu-trigger.vue"
-import DropdownMenuContent from "@/components/ui/dropdown-menu-content.vue"
 import EditItem from "./EditItem.vue"
 import DeleteItem from "./DeleteItem.vue"
 
@@ -29,6 +27,6 @@ interface Props {
 defineProps<Props>()
 
 const handleSuccess = () => {
-  // 关闭下拉菜单
+  console.log('Action success')
 }
 </script>

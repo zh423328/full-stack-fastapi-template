@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.90.12",
-    "@vueuse/core": "^11.4.0",
-    "axios": "1.13.4",
+    "@vueuse/core": "^14.2.0",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "form-data": "4.0.5",
+    "form-data": "^4.0.5",
     "lucide-vue-next": "^0.562.0",
     "radix-vue": "^1.9.11",
     "tailwind-merge": "^3.4.0",
@@ -23,7 +23,7 @@
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "vue-sonner": "^1.2.4",
-    "zod": "^4.3.6"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "0.73.0",
