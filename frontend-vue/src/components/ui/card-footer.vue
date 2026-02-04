@@ -1,0 +1,16 @@
+<template>
+  <div :class="cn('flex items-center p-6 pt-0', props.class)">
+    <slot />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { type HTMLAttributes } from "vue"
+import { cn } from "@/lib/utils"
+
+interface CardFooterProps {
+  class?: HTMLAttributes["class"]
+}
+
+const props = defineProps<CardFooterProps>()
+</script>
